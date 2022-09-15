@@ -27,10 +27,10 @@ def testDecoding(w, n, block, num):
     # 含有的value的个数
     num = int(length / (block + n))
     # 获得二进制的结果数组
-    value_sum_list = [w[block * i + n * i - n - 1:i * (block + n)] for i in range(0, num + 1)]
+    value_bin_list = [w[block * i + n * i - n - 1:i * (block + n)] for i in range(0, num + 1)]
     # 转换为十进制的结果数组
-    value_sum_list_10 = [int(value_sum_list[i], 2) for i in range(1, num + 1)]
-    for value in value_sum_list_10:
+    value_sum_list = [int(value_bin_list[i], 2) for i in range(1, num + 1)]
+    for value in value_sum_list:
         print(value)
-    return value_sum_list_10
+    return value_sum_list
 

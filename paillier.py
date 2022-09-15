@@ -38,7 +38,5 @@ print("c/-10.0=",private_key.decrypt(c_div))
 
 ##密文加密文
 print((private_key.decrypt(a)+private_key.decrypt(b))==private_key.decrypt(a+b))
-#报错，不支持a*b，因为通过密文加实现了明文加的目的，这和原理设计是不一致的，只支持密文加！
-# print((private_key.decrypt(a)+private_key.decrypt(b))==private_key.decrypt(a*b))
 
 
