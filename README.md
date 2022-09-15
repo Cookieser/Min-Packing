@@ -17,6 +17,10 @@ Compared with the original encryption of one plaintext at a time, this batching 
 * Decryption: decrypt ciphertext $c'$ using Paillier decryption, obtain plaintext $m'$ 
 * Unpacking: split $m'$ after decryption
 
+## Demo
+
+![20220916011143](https://pic-1306483575.cos.ap-nanjing.myqcloud.com/images/QQ%E5%9B%BE%E7%89%8720220916011143.png)
+
 ## Dependency
 
 [Partially Homomorphic Encryption library for Python](https://github.com/data61/python-paillier)
