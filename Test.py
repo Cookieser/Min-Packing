@@ -1,21 +1,20 @@
 import Coding
-from phe import paillier  # 开源库
+from phe import paillier
 
-n = 5
+# 设定value的位数n，设定值与值之间的间隔数，
+n = 9
 block = 5
 
-a = 10
-b = 30
-c = 20
-d = 20
+val1 = [1, 8, 10, 5]
+val2 = [25, 6, 9, 8]
 
 
 public_key, private_key = paillier.generate_paillier_keypair()
 
 # 添加测试数据
 
-m1 = Coding.testEncoding(a, b, n, block)
-m2 = Coding.testEncoding(c, d, n, block)
+m1 = Coding.testEncoding(val1, n, block)
+m2 = Coding.testEncoding(val2, n, block)
 
 message_list = [m1, m2]
 # 加密操作
@@ -26,19 +25,6 @@ x, y = encrypted_message_list
 z = x + y
 
 # 解密操作
-print(private_key.decrypt(x))
-print(private_key.decrypt(y))
-print(private_key.decrypt(z))
 q = private_key.decrypt(z)
-Coding.testDecoding(q, 20, n, block)
-
-print("验证："+"a=",a," c=",c,"   a+c=",a+c)
-print("验证："+"b=",b," d=",d,"   b+d=",b+d)
-
-
-
-
-
-
-
+Coding.testDecoding(q,  n, block, len(val1))
 

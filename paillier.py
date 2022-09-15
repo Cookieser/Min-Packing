@@ -1,5 +1,5 @@
-from phe import paillier # 开源库
-import time # 做性能测试
+from phe import paillier
+import time
 
 # 测试paillier参数
 print("默认私钥大小：",paillier.DEFAULT_KEYSIZE) 
