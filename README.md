@@ -19,7 +19,7 @@ Compared with the original encryption of one plaintext at a time, this batching 
 
 ## Demo
 
-![20220916011143](https://pic-1306483575.cos.ap-nanjing.myqcloud.com/images/QQ%E5%9B%BE%E7%89%8720220916011143.png)
+![20220916011143](https://pic-1306483575.cos.ap-nanjing.myqcloud.com/images/20220916011143.png)
 
 ## Dependency
 
