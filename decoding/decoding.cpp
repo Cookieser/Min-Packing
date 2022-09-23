@@ -1,5 +1,6 @@
 
 
+
 #include <iostream>
 #include <gmp.h>
 #include <string>
@@ -100,9 +101,7 @@ int testEncoding(int value[], int n, int block, int num, mpz_t result) {
 
 
 /*
-
 Decoding a big big number which has been transformed to plaintext after the homomorphic operations
-
 */
 int *testDecoding(mpz_t w, int n, int block, int num) {
 
@@ -135,78 +134,28 @@ int *testDecoding(mpz_t w, int n, int block, int num) {
 }
 
 
-int main() {
+int main(int argc, char* argv[]) {
 
 
     int block = 2;
 
     int n = 8;
-
-
-    /*
-    Reading data:
     
-    
-    Read a series of data in data.txt
-    
-    */
+    int num = argv[3];
 
-    int a;
-
-    int val[100];
-
-
-    FILE *fp1 = fopen("data.txt", "r");
-
-    char c = ' ';
-
-    if (fp1 == NULL) {
-        puts("CAN NOT OPEN THE TXT！");
-        return 0;
-    }
-
-    int m;
-
-    int num = 0;
-
-    fseek(fp1, 0, 2);
-
-    m = ftell(fp1);
-
-    rewind(fp1);
-
-    while (ftell(fp1) != m - 1) {
-        fscanf(fp1, "%d", &a);
-
-        val[num] = a;
-
-        //printf("%d\n",val[num]);
-
-        num++;
-
-
-    }
-
-
-    fclose(fp1);
-
-    /*
-    
-    Start to encoding : 
-    
-    
-    
-    try to packing all values into one coded number
-    
-    
-    */
     mpz_t result;
 
     mpz_init(result);
 
-    testEncoding(val, n, block, num, result);
 
 
+
+    FILE *fp1 = fopen(argv[1], "r");
+
+    mpz_inp_str(result, fp1, 10);
+    
+    fclose(fp1);
+    
     /*
     
     Start to decoding : 
@@ -223,7 +172,7 @@ int main() {
 
     res = testDecoding(result, n, block, num);
 
-    FILE *fp2 = fopen("output.txt", "w");
+    FILE *fp2 = fopen(argv[2], "w");
 
     char blockflag = ' ';
 
@@ -238,6 +187,5 @@ int main() {
 }
     
     
-	
-    
+
 
