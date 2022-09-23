@@ -1,48 +1,17 @@
 #include <iostream>
-#include <stdlib.h>
+#include <gmp.h>
 #include <string>
+
+
+#include <stdlib.h>
 #include <math.h>
 #include <sstream>
 #include <iomanip>
 #include <bits/stdc++.h>
-
 using namespace std;
-#define MAXN 10001 //a¿ÉÒÔÔÚ0~100£»bÔÚ0~1000£¬ËùÒÔa^b×î´óÎª10^10000,²»»á³¬¹ı10001Î»Êı
 
 
-void modRes(int res[], int n) {//´ÓµÍÎ»¿ªÊ¼Ïò¸ßÎ»½øÎ»
-    for(int i=0;i<n-1;++i) {
-        res[i+1] += (res[i]/10);
-        res[i] %=10;
-    }
-}
-int powInt(int a, int b)
-{
-    int i;
-    int res[MAXN]={0};//´æ·Å½á¹ûµÄÊı×é£¬¿ÉÒÔ¿´³ÉÒ»¸ö´óÊı
-    res[0]=a;
-    for(i=1;i<b;++i) {
-        for(int j=0;j<MAXN-1;++j) {
-            res[j] *= a;//´óÊıµÄÃ¿Ò»Î»³ËÒÔa
-        }
-        modRes(res, MAXN);//½øÎ»
-    }
- 
-    for(i=MAXN-1;i>=0;--i) {//¸ßÎ»¶àÓàµÄ0²»ĞèÒªÊä³ö
-        if(res[i] != 0) break;
-    }
-    cout<<a<<"^"<<b<<"=";
-    for(;i>=0;--i) {//´ÓµÚÒ»¸ö²»ÊÇ0µÄ¸ßÎ»¿ªÊ¼Êä³ö
-        cout<<res[i];
-    }
-    cout<<endl;
- 
-    return 0;
-}
- 
-
-
-/*Ê®½øÖÆ×ª¶ş½øÖÆ×Ö·û´®*/
+/*åè¿›åˆ¶è½¬äºŒè¿›åˆ¶å­—ç¬¦ä¸²*/
 string toBinary(long long n,int length)
 {
     string r;
@@ -58,38 +27,33 @@ string toBinary(long long n,int length)
 	}
     return r;
 }
+void trans(string s)
+{	
 
-/*×Ö·û´®¶ş½øÖÆ×ªÊ®½øÖÆ*/
-long long convertBinaryToDecimal(long long n)
-{
-    long long decimalNumber = 0, i = 0, remainder;
-    while (n!=0)
-    {
-        remainder = n%10;
-        n /= 10;
-        decimalNumber += remainder*pow(2,i);
-        ++i;
-    }
-    return decimalNumber;
-}
-long long trans(string s)
-{
+	mpz_t result, base,b;  
+    	mpz_init(base); 
+    	mpz_init(b); 
+    	mpz_set_si(base,2);
+     
+    	mpz_init(result); 
+    	unsigned long int exponent; 
+    	unsigned long int midvalue;
 	long long res=0;
 	for(int i =0;i<s.length();i++)
-	{
-		printf("%d",s[i]-48);
-		//cout <<"res="<<res<<"+"<<s[i]-48<<"*2^" <<s.length()-1-i<<endl;
-		res=res+(s[i]-48)*powInt(2,s.length()-1-i);
-		
+	{	
+		midvalue=s[i]-48;
+		exponent=s.length()-1-i;
+		mpz_pow_ui(b, base, exponent);
+		mpz_mul_ui(b,b,midvalue);
+		mpz_add(result,b,result);
 		
 	}
-	printf("The value  by decimal  %lld\n",res);
-	return res;
+	gmp_printf("%Zd", result); 
+	
+	mpz_clear(base); //gmpå˜é‡åœ¨ç”¨å®Œè¿‡åéœ€è¦clearï¼Œå¤§æ¦‚å°±æ˜¯é‡Šæ”¾ç©ºé—´  
+    	mpz_clear(b);   
 	
 }
-/*
-´«ÈëvalueÊı×é£¬nÖµÊıÎ»£¬block¼ä¸ô´óĞ¡£¬·µ»ØÒ»¸öpackingÊ®½øÖÆÊı 
-*/
 long long testEncoding(int value[], int n ,int block,int num)
 {
 	int valuemax=pow(2,n)-1;
@@ -99,7 +63,7 @@ long long testEncoding(int value[], int n ,int block,int num)
 	{
 		if(value[i]>valuemax) 
 			{
-				printf("Too large£¡");
+				printf("Too largeï¼");
 				return 0;
 			} 
 			
@@ -112,62 +76,32 @@ long long testEncoding(int value[], int n ,int block,int num)
    
     		cout <<"The value packed:"<< m<<endl;
 
-	long long res=trans(m);
-	return res;
+	trans(m);
+	return 0;
 }
-
-int * testDecoding(long long w, int n ,int block,int num)
-{
-	int length=(n+block)*num;
-	
-	
-	string b=toBinary(w,length);
-	cout <<b.length()<<endl;
-	cout <<b<<endl;
-	
-	
-	
-	int *value=new int[num];
-	string val;
-	for(int i=0;i<num;i++)
-	{
-		int a=block-1+ (n+block)*i;
-		int c=1+n;
-		val=b.substr(a,c);
-		cout <<a<<endl;
-		cout <<c<<endl;
-		cout <<val<<endl;
-		value[i]=trans(val);
-		
-	}
-	return value;
-	
-}
-int main(){
-	const int eps = 1e-6;
+int main() 
+{ 
+    /*mpz_t result, base; //å®šä¹‰gmpæ•´å‹å˜é‡ 
+    mpz_init(base); //gmpé‡Œé¢çš„å˜é‡èµ‹å€¼ä»¥å‰éƒ½è¦åˆå§‹åŒ–ï¼Œä¼°è®¡æ˜¯åˆ†é…å†…å­˜ç©ºé—´ 
+    mpz_init(result); unsigned long int exponent; //å®šä¹‰é•¿æ•´å‹æŒ‡æ•° 
+    printf("Please input a base:"); 
+    gmp_scanf("%Zd", &base); //è¾“å…¥åŸºæ•° 
+    printf("Please input a exponent:"); //è¾“å…¥æŒ‡æ•° 
+    scanf("%ld", &exponent); 
+    mpz_pow_ui(result, base, exponent); //è°ƒç”¨gmpé‡Œé¢çš„æŒ‡æ•°å‡½æ•° 
+    gmp_printf("%Zd", result); //è°ƒç”¨gmpé‡Œé¢çš„printfï¼Œå› ä¸ºè¾“å‡ºçš„ç»“æœå¯èƒ½ä¼šæ¯”è¾ƒå¤§ï¼Œæ‰€ä»¥printfä¸å¤Ÿ 
+    mpz_clear(base); //gmpå˜é‡åœ¨ç”¨å®Œè¿‡åéœ€è¦clearï¼Œå¤§æ¦‚å°±æ˜¯é‡Šæ”¾ç©ºé—´ 
+    mpz_clear(result); 
+    return 0; 
+    */
+    
+ 
 	int block =2;
 	int n=6;
-	
-	
-	
-	int i,datalen=0;
-    int val[100];
-    ifstream file("data.txt");
-    while( ! file.eof() )
-    file>>val[datalen++];
-    for(int i=0;i<datalen;i++)
-    {
-        cout<<val[i]<<" ";
-    }
-    file.close();
-	int num = datalen;
-	
-	
-	
-	printf("Quantity£º%d\n",num);
-	//testDecoding(testEncoding(val,n,block,num),n,block,num);
-	trans("11001001000001100111000100110101000010011111001111111101");
-
-	return 0;
+	int val[]={10,20,30};
+	int num=3;
+    testEncoding(val,n,block,num);
+    //string m;
+    //cin>>m;
+    //gmp_printf("%Zd", transt(m)); 
 } 
- //Ê¹ÓÃ´óÊı¿â£¬Í¬Ê±¼ÓÉÏio£¬ÓëÔ´´úÂë²úÉúÁ´½Ó¼´¿É £¬×Ü½áÍ¬Ì¬¼ÓÃÜ£¬ÔÄ¶ÁÓÅ»¯ÂÛÎÄ£¬ÔÄ¶ÁÓĞ¹Øc++µÄÉîÈëÖªÊ¶£¬powÓë´óÊı¿âÉîÈë 
