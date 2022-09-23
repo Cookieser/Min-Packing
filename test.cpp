@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <gmp.h>
 #include <string>
@@ -27,10 +28,11 @@ string toBinary(long long n,int length)
 	}
     return r;
 }
-void trans(string s)
+/*trans  010101(string)-->gmp_num*/
+void trans(string s, mpz_t result)
 {	
 
-	mpz_t result, base,b;  
+	mpz_t base,b;  
     	mpz_init(base); 
     	mpz_init(b); 
     	mpz_set_si(base,2);
@@ -49,13 +51,33 @@ void trans(string s)
 		
 	}
 	gmp_printf("%Zd", result); 
-	
+	printf("\n");
 	mpz_clear(base); //gmp变量在用完过后需要clear，大概就是释放空间  
     	mpz_clear(b);   
 	
 }
-long long testEncoding(int value[], int n ,int block,int num)
+
+long long translittle(string s)
 {
+	long long res=0;
+	for(int i =0;i<s.length();i++)
+	{
+		printf("%d",s[i]-48);
+		//cout <<"res="<<res<<"+"<<s[i]-48<<"*2^" <<s.length()-1-i<<endl;
+		res=res+(s[i]-48)*pow(2,s.length()-1-i);
+		
+		
+	}
+	printf("The value  by decimal  %lld\n",res);
+	return res;
+	
+}
+/*encoding and generate a gmp_num--------res*/
+long long testEncoding(int value[], int n ,int block,int num,mpz_t result)
+{
+
+        mpz_init(result);
+
 	int valuemax=pow(2,n)-1;
 	string m;
 	char c='0';
@@ -76,32 +98,63 @@ long long testEncoding(int value[], int n ,int block,int num)
    
     		cout <<"The value packed:"<< m<<endl;
 
-	trans(m);
+	trans(m,result);
 	return 0;
+}
+
+int * testDecoding(mpz_t w, int n ,int block,int num)
+{	
+
+
+	int length=(n+block)*num;
+	char *str=new char[100];
+	string b;
+	char c='0';
+	
+    	mpz_get_str(str,2,w);
+    	b=str;
+   	
+   	if(b.length()<length)
+    {
+    	b.insert(0,length-b.length(),c);
+	}
+   	cout <<b<<endl;
+   	
+	
+	int *value=new int[num];
+	string val;
+	for(int i=0;i<num;i++)
+	{
+		int a=block-1+ (n+block)*i;
+		int c=1+n;
+		val=b.substr(a,c);
+		//cout <<a<<endl;
+		//cout <<c<<endl;
+		//cout <<val<<endl;
+		value[i]=translittle(val);
+		
+	}
+	return value;
+	
 }
 int main() 
 { 
-    /*mpz_t result, base; //定义gmp整型变量 
-    mpz_init(base); //gmp里面的变量赋值以前都要初始化，估计是分配内存空间 
-    mpz_init(result); unsigned long int exponent; //定义长整型指数 
-    printf("Please input a base:"); 
-    gmp_scanf("%Zd", &base); //输入基数 
-    printf("Please input a exponent:"); //输入指数 
-    scanf("%ld", &exponent); 
-    mpz_pow_ui(result, base, exponent); //调用gmp里面的指数函数 
-    gmp_printf("%Zd", result); //调用gmp里面的printf，因为输出的结果可能会比较大，所以printf不够 
-    mpz_clear(base); //gmp变量在用完过后需要clear，大概就是释放空间 
-    mpz_clear(result); 
-    return 0; 
-    */
+    mpz_t result,test; //定义gmp整型变量
+    mpz_init(result);
+    mpz_init(test);
+    mpz_set_si(test,56583553609757693);
+    
     
  
-	int block =2;
-	int n=6;
-	int val[]={10,20,30};
-	int num=3;
-    testEncoding(val,n,block,num);
-    //string m;
-    //cin>>m;
-    //gmp_printf("%Zd", transt(m)); 
-} 
+    int block =2;
+    int n=8;
+    int val[]={10,20,30,40,50,60,10,20};
+    int num=sizeof(val) / sizeof(val[0]);
+    char *str=new char[100];
+    string x;
+    
+    testEncoding(val,n,block,num,result);
+    testDecoding(result,n,block,num);
+
+    
+}
