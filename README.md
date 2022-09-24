@@ -105,4 +105,4 @@ Let's use the data in `data.txt` as the  original data, add itself by Paillier c
 
 ![image-20220924143440565](https://pic-1306483575.cos.ap-nanjing.myqcloud.com/images/image-20220924143440565.png)
 
-![image-20220924143827840](https://pic-1306483575.cos.ap-nanjing.myqcloud.com/images/image-20220924143827840.png)
+![QQ图片20220924144752](https://pic-1306483575.cos.ap-nanjing.myqcloud.com/images/QQ%E5%9B%BE%E7%89%8720220924144752.png)
