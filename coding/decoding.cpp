@@ -12,20 +12,6 @@
 
 using namespace std;
 
-/*a decimal number will be transformed to the binary one with the fix length*/
-string toBinary(long long n, int length) {
-    string r;
-    char c = '0';
-    while (n != 0) {
-        r += (n % 2 == 0 ? "0" : "1");
-        n /= 2;
-    }
-    reverse(r.begin(), r.end());
-    if (r.length() < length) {
-        r.insert(0, length - r.length(), c);
-    }
-    return r;
-}
 
 /*trans  010101(string)-->gmp_num*/
 void trans(string s, mpz_t result) {
@@ -71,34 +57,6 @@ long long translittle(string s) {
 
 }
 
-/*encoding these data and generate a gmp_num*/
-int testEncoding(int value[], int n, int block, int num, mpz_t result) {
-
-    mpz_init(result);
-
-    int valuemax = pow(2, n) - 1;
-    string m;
-    char c = '0';
-    for (int i = 0; i < num; i++) {
-        if (value[i] > valuemax) {
-            printf("Too large！");
-            return 0;
-        }
-
-        string q = toBinary(value[i], n);
-        q.insert(0, block, c);
-        cout << "Adding value expressed by binary:" << q << endl;
-        m = m + q;
-
-    }
-
-    cout << "The value packed:" << m << endl;
-    printf("%s", "so, the packing value is ");
-    trans(m, result);
-    printf("\n");
-    return 0;
-}
-
 
 /*
 Decoding a big big number which has been transformed to plaintext after the homomorphic operations
@@ -134,28 +92,26 @@ int *testDecoding(mpz_t w, int n, int block, int num) {
 }
 
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 
 
-    int block = 2;
+    int block = atoi(argv[4]);
 
-    int n = 8;
-    
-    int num = argv[3];
+    int n = atoi(argv[5]);
+
+    int num = atoi(argv[3]);
 
     mpz_t result;
 
     mpz_init(result);
 
 
-
-
     FILE *fp1 = fopen(argv[1], "r");
 
-    mpz_inp_str(result, fp1, 10);
-    
+    mpz_inp_str(result, fp1, 16);
+
     fclose(fp1);
-    
+
     /*
     
     Start to decoding : 
