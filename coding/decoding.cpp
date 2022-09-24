@@ -65,7 +65,7 @@ int *testDecoding(mpz_t w, int n, int block, int num) {
 
 
     int length = (n + block) * num;
-    char *str = new char[100];
+    char *str = new char[100000];
     string b;
     char c = '0';
 
