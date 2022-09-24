@@ -106,3 +106,13 @@ Let's use the data in `data.txt` as the  original data, add itself by Paillier c
 ![image-20220924143440565](https://pic-1306483575.cos.ap-nanjing.myqcloud.com/images/image-20220924143440565.png)
 
 ![QQ图片20220924144752](https://pic-1306483575.cos.ap-nanjing.myqcloud.com/images/QQ%E5%9B%BE%E7%89%8720220924144752.png)
+
+Try 100 numbers in `data.txt`, this program can work as well.
+
+![image](https://user-images.githubusercontent.com/87306014/192086168-680f4e7a-6f10-4891-b051-c9ba9f844cdc.png)
+![image](https://user-images.githubusercontent.com/87306014/192086232-1b8ecbd8-02b8-48bc-a4b2-a2773b1c2637.png)
+
+
+![image](https://user-images.githubusercontent.com/87306014/192086210-b93f3b95-e3fa-40b0-b5eb-bb0451b09ed6.png)
+
+![image](https://user-images.githubusercontent.com/87306014/192086252-2cfabaa1-2c6c-4881-af24-305f549547fc.png)
