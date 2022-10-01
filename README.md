@@ -11,7 +11,7 @@ The Paillier cryptosystem is a public-key cryptosystem with a very interesting p
 
 The motivation of this program is to implement the Paillier cryptosystem in C using the GMP library (GNU Multiple Precision Arithmetic Library) for low-level functions. The cryptosystem is provided as a shared library, and a small command interpreter is also available to execute various tasks like key generation, encryption, decryption, homomorphic operations from the command line. The program was developed from a Linux machine and has not been tested on a different environment.
 
-More information about the Paillier cryptosystem and GMP can be found [here](https://en.wikipedia.org/wiki/Paillier_cryptosystem https://gmplib.org/). 
+More information about the Paillier cryptosystem and GMP can be found (https://en.wikipedia.org/wiki/Paillier_cryptosystem https://gmplib.org/). 
 
 ## How to use
 
