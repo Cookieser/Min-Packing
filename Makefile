@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Werror -c -lpthread -DPAILLIER_THREAD -fpic
-DEPS = include/paillier.h src/tools.h
-OBJ_LIB = build/tools.o build/paillier.o build/paillier_manage_keys.o build/paillier_io.o
+DEPS = include/paillier.h src/tools.h src/lsic.h src/encrypted_comparing.h
+OBJ_LIB = build/tools.o build/paillier.o build/paillier_manage_keys.o build/paillier_io.o build/lsic.o build/encrypted_comparing.o
 OBJ_INTERPRETER = build/main.o 
 
 ifeq ($(PREFIX), )
@@ -9,7 +9,7 @@ ifeq ($(PREFIX), )
 endif
 
 #standaloine command interpreter executable recipe	
-build/paillier_standalone: build/main.o $(OBJ_LIB)
+build/Implementation: build/main.o $(OBJ_LIB)
 	$(CC) -Wall -o $@ $^ -lgmp -lpthread
 
 #command interpreter executable recipe	
@@ -53,8 +53,8 @@ clean:
 
 debug: build/paillier
 debug: CFLAGS += -ggdb -DPAILLIER_DEBUG
-release: build/paillier
-standalone: build/paillier_standalone
+release: build/LSIC
+standalone: build/LSIC
 sharedlib: build/lib/libpaillier.so
 staticlib: build/lib/libpaillier.a
 all: release doc staticlib sharedlib
