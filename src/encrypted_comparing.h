@@ -24,7 +24,7 @@
 #else
 #define DEBUG_MSG(str)
 #endif
-int encrypted_comparing(mpz_t cres,long int inputa,long int inputb,int l);
+int encrypted_comparing(mpz_t res,mpz_t ca,mpz_t cb,int l,paillier_public_key pub,paillier_private_key priv);
 
 
 

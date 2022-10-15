@@ -11,18 +11,14 @@
 
 
            
-int encrypted_comparing(mpz_t cres,long int inputa,long int inputb,int l)
+int encrypted_comparing(mpz_t res,mpz_t ca,mpz_t cb,int l,paillier_public_key pub,paillier_private_key priv)
 {
 	/*encrypted Data*/
 	
 	/*issue:The randaom bit lambda --wrong!!!*/
 	
 	int lambda=5;
-	mpz_t a,b,ca,cb,d,tau,t,ct,negone,x,cx,q,cq,r,cr,z,cz,c,base,czl,crl,cm,cn,res,zl,rl;
-	mpz_init(a);
-	mpz_init(b);
-	mpz_init(ca);
-	mpz_init(cb);
+	mpz_t d,tau,t,ct,negone,x,cx,q,cq,r,cr,z,cz,c,base,czl,crl,cm,cn,cres,zl,rl;
 	mpz_init(tau);
 	mpz_init(ct);
 	mpz_init(t);
@@ -42,7 +38,6 @@ int encrypted_comparing(mpz_t cres,long int inputa,long int inputb,int l)
 	mpz_init(crl);
 	mpz_init(cm);
 	mpz_init(cn);
-	mpz_init(res);
 	mpz_init(cres);
 	mpz_init(zl);
 	mpz_init(rl);
@@ -53,14 +48,6 @@ int encrypted_comparing(mpz_t cres,long int inputa,long int inputb,int l)
 	
 	
 	
-	//generate keys
-	    int len=2048;
-	    paillier_public_key pub;
-	    paillier_private_key priv;
-
-	    paillier_public_init(&pub);
-	    paillier_private_init(&priv);
-	    paillier_keygen(&pub, &priv, len);
 	    
 	    
       //constant
@@ -73,14 +60,6 @@ int encrypted_comparing(mpz_t cres,long int inputa,long int inputb,int l)
       
       //encrypted Data
 	    
-	mpz_set_si(a, inputa);
-	
-	mpz_set_si(b, inputb);
-	
-	
-	paillier_encrypt(ca,a,&pub);
-	
-	paillier_encrypt(cb,b,&pub);
 	
 	// 1-7
 	//[[x]]=[[b-a+q]]
@@ -157,7 +136,7 @@ int encrypted_comparing(mpz_t cres,long int inputa,long int inputb,int l)
 	
 	paillier_decrypt(res,cres,&priv);
 	//gmp_printf ("finial:%Zd\n",res);
-	printf("----------------------------");
+	printf("----------------------------encrypted_comparing:");
 	if(!mpz_cmp_si(res,0)) printf("A>B\n");
 	else printf("A<=B\n");
 	
@@ -169,10 +148,6 @@ int encrypted_comparing(mpz_t cres,long int inputa,long int inputb,int l)
 
 	mpz_clear(tau);
 	mpz_clear(ct);
-	mpz_clear(a);
-	mpz_clear(b);
-	mpz_clear(ca);
-	mpz_clear(cb);
 	mpz_clear(negone);
 	mpz_clear(x);
 	mpz_clear(cx);
@@ -189,7 +164,7 @@ int encrypted_comparing(mpz_t cres,long int inputa,long int inputb,int l)
 	mpz_clear(cn);	 	
 	mpz_clear(t);  
 	mpz_clear(base); 
-	mpz_clear(res);   
+	mpz_clear(cres);   
 	mpz_clear(zl); 
 	mpz_clear(rl); 
 	    

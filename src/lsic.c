@@ -149,7 +149,7 @@ int LSIC(mpz_t a,mpz_t b, int l,mpz_t ct,paillier_public_key pub,paillier_privat
 	   
 	
 	
-	    printf("-------");
+	    printf("-------LSIC:");
 	     if(mpz_cmp_si(t,0)) printf("a<b\n");
 	    else printf("a>=b\n");
 
