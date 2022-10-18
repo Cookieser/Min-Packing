@@ -1,6 +1,6 @@
 aux_source_directory(. DIR_LIB_SRCS)
  
-add_library(coding ${DIR_LIB_SRCS})
+add_library(paillier ${DIR_LIB_SRCS})
 
 
 # GMP
@@ -9,4 +9,4 @@ find_library(GMP_LIBRARIES NAMES gmp libgmp)
 find_library(GMPXX_LIBRARIES NAMES gmpxx libgmpxx)
 
  
-target_link_libraries(coding gmp gmpxx)
+target_link_libraries(paillier gmp gmpxx)

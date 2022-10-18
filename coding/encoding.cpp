@@ -7,6 +7,7 @@
 #include <sstream>
 #include <iomanip>
 #include <bits/stdc++.h>
+#include "encoding.h"
 
 using namespace std;
 
@@ -82,12 +83,10 @@ int testEncoding(int value[], int n, int block, int num, mpz_t result) {
 }
 
 
-int main(int argc, char *argv[]) {
+int encoding(int block, int n,char *input,char *output) {
 
 
-    int block = atoi(argv[3]);
-
-    int n = atoi(argv[4]);
+   
 
 
     /*
@@ -103,7 +102,7 @@ int main(int argc, char *argv[]) {
     int val[100];
 
 
-    FILE *fp1 = fopen(argv[1], "r");
+    FILE *fp1 = fopen(input, "r");
 
     char c = ' ';
 
@@ -148,7 +147,7 @@ int main(int argc, char *argv[]) {
     
     */
 
-    FILE *fp2 = fopen(argv[2], "w");
+    FILE *fp2 = fopen(output, "w");
 
     mpz_t result;
 
@@ -158,7 +157,7 @@ int main(int argc, char *argv[]) {
 
     mpz_out_str(fp2, 16, result);
     fclose(fp2);
-
+	return 0;
 
 }
     

@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 #include <gmp.h>
-#include "../include/paillier.h"
+#include "paillier.h"
 #include "lsic.h"
 
 

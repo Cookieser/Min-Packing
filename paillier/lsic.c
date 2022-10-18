@@ -7,7 +7,7 @@
 #include "lsic.h"
 
 
-#include "../include/paillier.h"
+#include "paillier.h"
 
 
            

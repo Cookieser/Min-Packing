@@ -24,7 +24,7 @@
  */
 
 #include "tools.h"
-#include "../include/paillier.h"
+#include "paillier.h"
 
 /**
  * Wrapper to the key generation function using stdio streams as inputs and output.
