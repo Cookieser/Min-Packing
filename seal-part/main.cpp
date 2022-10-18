@@ -36,7 +36,7 @@ int main()
     EncryptionParameters parms(scheme_type::bfv);
 
     
-    size_t poly_modulus_degree = 4096;
+    size_t poly_modulus_degree = 16384;
     parms.set_poly_modulus_degree(poly_modulus_degree);
 
     
@@ -71,8 +71,8 @@ int main()
 
     mpz_t a,b;
     mpz_inits(a,b,NULL);
-    mpz_set_si(a, 1000);
-    mpz_set_si(b, 1000);
+    mpz_set_si(a, 52);
+    mpz_set_si(b, 60);
     
     //char *str = new char[100000];
     
@@ -102,11 +102,6 @@ int main()
     encryptor.encrypt(b0_plain, b0_encrypted);
 
 
-    //cout << "    + size of freshly encrypted b0: " << b0_encrypted.size() << endl;
-
-    
-    //cout << "    + noise budget in freshly encrypted b0: " << decryptor.invariant_noise_budget(b0_encrypted) << " bits"
-    //     << endl;
      
     
     //Ciphertext
@@ -116,7 +111,7 @@ int main()
    
     
     
-    for(int i=1;i<l;i++){
+    
       
     if(a0==0) 
     {
@@ -136,7 +131,10 @@ int main()
     
     srand((unsigned)time(NULL));
     
+    Ciphertext resa_encrypted;
+    Ciphertext resb_encrypted;
     
+    for(int i=1;i<l;i++){
     //tau=t*(1-c)+(1-t)*c
     
     int c=rand()%2;
@@ -159,19 +157,40 @@ int main()
     //cout << "1-t:" + test_decrypted.to_string() <<"\n"<< endl;
     
     
-    Ciphertext resa_encrypted;
-    Ciphertext resb_encrypted;
+    
     evaluator.multiply(t_encrypted,one_sub_c_encrypted,resa_encrypted);
+    evaluator.relinearize_inplace(resa_encrypted, relin_keys);
+    
+    
+     cout << "    + size of freshly resa_encrypted : " << resa_encrypted.size() << endl;
+
+    
+    cout << "    + noise budget in freshly resa_encrypted : " << decryptor.invariant_noise_budget(resa_encrypted) << " bits"
+         << endl;
+    
     decryptor.decrypt(resa_encrypted, test_decrypted);
   	//cout << "resa:" + test_decrypted.to_string() <<"\n"<< endl;
     
     evaluator.multiply(one_sub_t_encrypted,c_encrypted,resb_encrypted);
+    evaluator.relinearize_inplace(resb_encrypted, relin_keys);
+    
+         cout << "    + size of freshly resb_encrypted : " << resb_encrypted.size() << endl;
+
+    
+    cout << "    + noise budget in freshly resb_encrypted : " << decryptor.invariant_noise_budget(resb_encrypted) << " bits"
+         << endl;
     decryptor.decrypt(resb_encrypted, test_decrypted);
   	//cout << "resb:" + test_decrypted.to_string() <<"\n"<< endl;
     
     Ciphertext tau_encrypted;
     evaluator.add(resa_encrypted,resb_encrypted,tau_encrypted);
     decryptor.decrypt(tau_encrypted, test_decrypted);
+    
+             cout << "    + size of freshly tau_encrypted : " << tau_encrypted.size() << endl;
+
+    
+    cout << "    + noise budget in freshly tau_encrypted : " << decryptor.invariant_noise_budget(tau_encrypted) << " bits"
+         << endl;
     //cout << "tau:" + test_decrypted.to_string() <<"\n"<< endl;
     
     
@@ -194,6 +213,7 @@ int main()
     
     Ciphertext tb_encrypted;
     evaluator.multiply(tau_encrypted, bi_encrypted,tb_encrypted);
+    evaluator.relinearize_inplace(tb_encrypted, relin_keys);
     decryptor.decrypt(tb_encrypted, test_decrypted);
     //cout << "tb:" + test_decrypted.to_string() <<"\n"<< endl;
     
@@ -211,8 +231,10 @@ int main()
     Ciphertext resc_encrypted;
     evaluator.sub(bi_encrypted,tb_encrypted,resc_encrypted);
     evaluator.multiply(resc_encrypted, c_encrypted,resc_encrypted);
+    evaluator.relinearize_inplace(resc_encrypted, relin_keys);
     Ciphertext resd_encrypted;
     evaluator.multiply(tb_encrypted,one_sub_c_encrypted,resd_encrypted);
+    evaluator.relinearize_inplace(resd_encrypted, relin_keys);
     evaluator.add(resc_encrypted,resd_encrypted,tb_encrypted);
     decryptor.decrypt(tb_encrypted, test_decrypted);
     //cout << "tb:" + test_decrypted.to_string() <<"\n"<< endl;
@@ -236,10 +258,13 @@ int main()
     evaluator.add(bi_encrypted,t_encrypted,t_encrypted);
     evaluator.sub(t_encrypted,tb_encrypted,t_encrypted);
     evaluator.multiply(t_encrypted,one_sub_ai_encrypted,rese_encrypted);
+    evaluator.relinearize_inplace(rese_encrypted, relin_keys);
     
     Ciphertext resf_encrypted;
     evaluator.multiply(tb_encrypted,ai_encrypted,resf_encrypted);
+    evaluator.relinearize_inplace(resf_encrypted, relin_keys);
     evaluator.add(rese_encrypted,resf_encrypted,t_encrypted);
+    evaluator.relinearize_inplace(t_encrypted, relin_keys);
     decryptor.decrypt(t_encrypted, test_decrypted);
     cout << "t:" + test_decrypted.to_string() <<"\n"<< endl;
     
@@ -250,19 +275,15 @@ int main()
          << endl;
     
     
-    //evaluator.relinearize_inplace(t_encrypted, relin_keys);
-    // cout << "    + size of freshly encrypted t: " << t_encrypted.size() << endl;
 
-    
-    //cout << "    + noise budget in freshly encrypted t: " << decryptor.invariant_noise_budget(t_encrypted) << " bits"
-     //    << endl;
 	      
-            if(test_decrypted.to_string()=="1")
-            cout<<"a<b"<<endl;
-            else cout<<"a>=b"<<endl;
+            
+            
     		
     		}	
-    
+    if(test_decrypted.to_string()=="1")
+            cout<<"-----------------------------a<b-------------------------------"<<endl;
+            else cout<<"------------------------a>=b-------------------------------"<<endl;
  
 	
 	
