@@ -7,27 +7,11 @@ using namespace std;
 using namespace seal;
 
 
+int valueAtBit(int num, int bit) {
 
-int binarybit(mpz_t r,mpz_t val,int n){
-	    mpz_t q, d;
-	    mpz_init(q);
-            mpz_init(r);
-            mpz_init(d);
-            mpz_set_si(d, 2);
+    return (num >> (bit -1)) & 1;
 
-	    for(int i=0;i<n+1;i++)
-        {
-		    mpz_fdiv_qr(q,r, val, d);
-		    val=q;
-        }
-
-           //gmp_printf ("The %d-bit of this value is %Zd\n",n,r);
-
-          mpz_clear(q);
-          mpz_clear(d);
-          return 0;
-
-}  
+}
 
 int main()
 {
@@ -36,17 +20,23 @@ int main()
     EncryptionParameters parms(scheme_type::bfv);
 
     
-    size_t poly_modulus_degree = 16384;
+    size_t poly_modulus_degree = 32768 ;
     parms.set_poly_modulus_degree(poly_modulus_degree);
 
     
     parms.set_coeff_modulus(CoeffModulus::BFVDefault(poly_modulus_degree));
 
     
-    parms.set_plain_modulus(1024);
+    parms.set_plain_modulus(PlainModulus::Batching(poly_modulus_degree, 20));
 
     
     SEALContext context(parms);
+    
+    print_parameters(context);
+    cout << endl; 
+
+    auto qualifiers = context.first_context_data()->qualifiers();
+    cout << "Batching enabled: " << boolalpha << qualifiers.using_batching << endl;
     
 
 
@@ -68,131 +58,192 @@ int main()
 
     Decryptor decryptor(context, secret_key);
     
-
-    mpz_t a,b;
-    mpz_inits(a,b,NULL);
-    mpz_set_si(a, 52);
-    mpz_set_si(b, 60);
+	
+	
+	
+    // Data
     
-    //char *str = new char[100000];
+
+    BatchEncoder batch_encoder(context);
+    size_t slot_count = batch_encoder.slot_count();
+    size_t row_size = slot_count / 2;
+    cout << "Plaintext matrix row size: " << row_size << endl;
+    
+    vector<uint64_t> matrix_a(slot_count, 0ULL);
+    matrix_a[0] = 3ULL;
+    matrix_a[1] = 1ULL;
+    matrix_a[2] = 50ULL;
+    matrix_a[3] = 61ULL;
+    matrix_a[row_size + 0] = 27ULL;
+    matrix_a[row_size + 1] = 5ULL;
+    matrix_a[row_size + 2] = 20ULL;
+    matrix_a[row_size + 3] = 19ULL;
+   
+    cout << "matrix_a:" << endl;
+    print_matrix(matrix_a, row_size);
+    
+    vector<uint64_t> matrix_b(slot_count, 0ULL);
+    matrix_b[0] = 3ULL;
+    matrix_b[1] = 5ULL;
+    matrix_b[2] = 71ULL;
+    matrix_b[3] = 80ULL;
+    matrix_b[row_size + 0] = 25ULL;
+    matrix_b[row_size + 1] = 45ULL;
+    matrix_b[row_size + 2] = 24ULL;
+    matrix_b[row_size + 3] = 13ULL;
+    
+    cout << "matrix_b:" << endl;
+    print_matrix(matrix_b, row_size);
+    
+    
+    
+    //a0
+    vector<uint64_t> matrix_a0(slot_count, 0ULL);    
+    for(int i=0; i<row_size;i++){
+    matrix_a0[i]=(valueAtBit(matrix_a[i],1));
+    matrix_a0[row_size + i]=(valueAtBit(matrix_a[row_size + i],1));
+    }
+     cout << "matrix_a0:" << endl;
+    print_matrix(matrix_a0, row_size);
+    
+    //b0
+    vector<uint64_t> matrix_b0(slot_count, 0ULL);    
+    for(int i=0; i<row_size;i++){
+    matrix_b0[i]=(valueAtBit(matrix_b[i],1));
+    matrix_b0[row_size + i]=(valueAtBit(matrix_b[row_size + i],1));
+    }
+     cout << "matrix_b0:" << endl;
+    print_matrix(matrix_b0, row_size);
+    Plaintext plain_matrix_b0;
+    batch_encoder.encode(matrix_b0, plain_matrix_b0);
+    Ciphertext encrypted_matrix_b0;
+    encryptor.encrypt(plain_matrix_b0, encrypted_matrix_b0);
+    
+    
+    
+    
+    //1-a0
+    vector<uint64_t> matrix_one_sub_a0(slot_count, 0ULL);    
+    for(int i=0; i<row_size;i++){
+    matrix_one_sub_a0[i]=1-matrix_a0[i];
+    matrix_one_sub_a0[row_size + i]=1-matrix_a0[row_size + i];
+    }
+     cout << "matrix_one_sub_a0:" << endl;
+    print_matrix(matrix_one_sub_a0, row_size);
+    Plaintext plain_matrix_one_sub_a0;
+    batch_encoder.encode(matrix_one_sub_a0, plain_matrix_one_sub_a0);
+    Ciphertext encrypted_matrix_one_sub_a0;
+    encryptor.encrypt(plain_matrix_one_sub_a0, encrypted_matrix_one_sub_a0);
+    
+    
     
     //constant
-    int l=12;
-    Plaintext zero_plain(uint64_to_hex_string(0));
-    Ciphertext zero_encrypted;
-    encryptor.encrypt(zero_plain, zero_encrypted);
     
-    Plaintext one_plain(uint64_to_hex_string(1));
+    
+    
+    
+    
+    
+    
+    vector<uint64_t> matrix_one(slot_count, 0ULL);    
+    for(int i=0; i<row_size;i++){
+    matrix_one[i]=1;
+    matrix_one[row_size + i]=1;
+    }
+     //cout << "matrix_one:" << endl;
+    //print_matrix(matrix_one, row_size);
+    Plaintext one_plain;
+    batch_encoder.encode(matrix_one, one_plain);
     Ciphertext one_encrypted;
     encryptor.encrypt(one_plain, one_encrypted);
     
-    //1-7
-    
-    
-    int a0=mpz_tstbit(a,0);
-    printf("a0:%d\n",a0);
-    
-    int b0=mpz_tstbit(b,0);
-    printf("b0:%d\n",b0);
-    
-    Plaintext b0_plain(uint64_to_hex_string(b0));
-    cout << "Express x = " + to_string(b0) + " as a plaintext polynomial 0x" + b0_plain.to_string() + "." << endl;
-    
-    Ciphertext b0_encrypted;
-    encryptor.encrypt(b0_plain, b0_encrypted);
-
-
-     
-    
-    //Ciphertext
-    Ciphertext t_encrypted;  
-    
-    
-   
-    
-    
-    
-      
-    if(a0==0) 
-    {
-    	
-    	t_encrypted=zero_encrypted;
-    }else
-    {
-    t_encrypted=b0_encrypted;
-    
+     vector<uint64_t> matrix_zero(slot_count, 0ULL);    
+    for(int i=0; i<row_size;i++){
+    matrix_one[i]=0;
+    matrix_one[row_size + i]=0;
     }
+    // cout << "matrix_zero:" << endl;
+    //print_matrix(matrix_zero, row_size);
+    Plaintext zero_plain;
+    batch_encoder.encode(matrix_zero, zero_plain);
+    Ciphertext zero_encrypted;
+    encryptor.encrypt(zero_plain, zero_encrypted);
     
     
-    Plaintext test_decrypted;
-    decryptor.decrypt(t_encrypted, test_decrypted);
-    //cout << "t:" + test_decrypted.to_string() <<"\n"<< endl;
+    
+    //t= b0*(1-a0)
+    
+    Ciphertext t_encrypted;
+    evaluator.multiply(encrypted_matrix_b0,encrypted_matrix_one_sub_a0,t_encrypted);
+    evaluator.relinearize_inplace(t_encrypted, relin_keys);
+    
+    Plaintext plain_result;
+
+    decryptor.decrypt(t_encrypted, plain_result);
+    vector<uint64_t> pod_result;
+    batch_encoder.decode(plain_result, pod_result);
+    cout << "t:" << endl;
+    print_matrix(pod_result, row_size);
     
     
+for(int i=2;i<12;i++){
     srand((unsigned)time(NULL));
     
-    Ciphertext resa_encrypted;
-    Ciphertext resb_encrypted;
     
-    for(int i=1;i<l;i++){
-    //tau=t*(1-c)+(1-t)*c
+//tau=t*(1-c)+(1-t)*c
+    //c
+    vector<uint64_t> matrix_c(slot_count, 0ULL);    
+    for(int j=0; j<row_size;j++){
+    matrix_c[j]=rand()%2;
+    matrix_c[row_size + j]=rand()%2;
+    }
+     cout << "matrix_c:" << endl;
+    print_matrix(matrix_c, row_size);
+    Plaintext c_plain;
+    batch_encoder.encode(matrix_c, c_plain);
     
-    int c=rand()%2;
-    //cout << "c:" <<c<<"\n"<< endl;
-    Plaintext c_plain(uint64_to_hex_string(c));
     Ciphertext c_encrypted;
     encryptor.encrypt(c_plain, c_encrypted);
-    //cout << "c:" + c_plain.to_string() <<"\n"<< endl;
     
     
-    int one_sub_c=1-c;
+    
+    
+    //1-c
+    vector<uint64_t> matrix_one_sub_c(slot_count, 0ULL);    
+    for(int j=0; j<row_size;j++){
+    matrix_one_sub_c[j]=1-matrix_c[j];
+    matrix_one_sub_c[row_size + j]=1-matrix_c[row_size + j];
+    }
+     cout << "matrix_one_sub_c:" << endl;
+    print_matrix(matrix_one_sub_c, row_size);
+    Plaintext one_sub_c_plain;
+    batch_encoder.encode(matrix_one_sub_c, one_sub_c_plain);
+    
     Ciphertext one_sub_c_encrypted;
-    Plaintext one_sub_c_plain(uint64_to_hex_string(one_sub_c));
     encryptor.encrypt(one_sub_c_plain, one_sub_c_encrypted);
-    //cout << "1-c:" + one_sub_c_plain.to_string() <<"\n"<< endl;
-    	
+    
+    //1-t
     Ciphertext one_sub_t_encrypted;
     evaluator.sub(one_encrypted,t_encrypted,one_sub_t_encrypted);
-    decryptor.decrypt(one_sub_t_encrypted, test_decrypted);
-    //cout << "1-t:" + test_decrypted.to_string() <<"\n"<< endl;
-    
-    
-    
+   
+
+    Ciphertext resa_encrypted;
+    Ciphertext resb_encrypted;
     evaluator.multiply(t_encrypted,one_sub_c_encrypted,resa_encrypted);
     evaluator.relinearize_inplace(resa_encrypted, relin_keys);
-    
-    
-     cout << "    + size of freshly resa_encrypted : " << resa_encrypted.size() << endl;
-
-    
-    cout << "    + noise budget in freshly resa_encrypted : " << decryptor.invariant_noise_budget(resa_encrypted) << " bits"
-         << endl;
-    
-    decryptor.decrypt(resa_encrypted, test_decrypted);
-  	//cout << "resa:" + test_decrypted.to_string() <<"\n"<< endl;
     
     evaluator.multiply(one_sub_t_encrypted,c_encrypted,resb_encrypted);
     evaluator.relinearize_inplace(resb_encrypted, relin_keys);
     
-         cout << "    + size of freshly resb_encrypted : " << resb_encrypted.size() << endl;
-
-    
-    cout << "    + noise budget in freshly resb_encrypted : " << decryptor.invariant_noise_budget(resb_encrypted) << " bits"
-         << endl;
-    decryptor.decrypt(resb_encrypted, test_decrypted);
-  	//cout << "resb:" + test_decrypted.to_string() <<"\n"<< endl;
-    
     Ciphertext tau_encrypted;
     evaluator.add(resa_encrypted,resb_encrypted,tau_encrypted);
-    decryptor.decrypt(tau_encrypted, test_decrypted);
     
-             cout << "    + size of freshly tau_encrypted : " << tau_encrypted.size() << endl;
-
     
-    cout << "    + noise budget in freshly tau_encrypted : " << decryptor.invariant_noise_budget(tau_encrypted) << " bits"
-         << endl;
-    //cout << "tau:" + test_decrypted.to_string() <<"\n"<< endl;
     
+    decryptor.decrypt(tau_encrypted, plain_result);
+    batch_encoder.decode(plain_result, pod_result);
+    cout << "tau:" << endl;
+    print_matrix(pod_result, row_size);
     
     
     // randomizes 
@@ -200,33 +251,38 @@ int main()
     decryptor.decrypt(tau_encrypted, tau_decrypted);
   
     encryptor.encrypt(tau_decrypted, tau_encrypted);
-    decryptor.decrypt(tau_encrypted, test_decrypted);
-    //cout << "retau:" + test_decrypted.to_string() <<"\n"<< endl;
+    decryptor.decrypt(tau_encrypted, plain_result);
+    batch_encoder.decode(plain_result, pod_result);
+    cout << "re-tau:" << endl;
+    print_matrix(pod_result, row_size);
+   
+    
     
     //tb=bi*tau
-    // there is 1--i
-    int bi=mpz_tstbit(b,i);
-    //printf("bi:%d\n",bi);
-    Plaintext bi_plain(uint64_to_hex_string(bi));
+    
+    //bi
+    cout<<i<<endl; 
+    vector<uint64_t> matrix_bi(slot_count, 0ULL);    
+    for(int j=0; j<row_size;j++){
+    matrix_bi[j]=(valueAtBit(matrix_b[j],i));
+    matrix_bi[row_size + j]=(valueAtBit(matrix_b[row_size + j],i));
+    }
+     cout << "matrix_bi:" << endl;
+    print_matrix(matrix_bi, row_size);
+    Plaintext bi_plain;
+    batch_encoder.encode(matrix_bi, bi_plain);
     Ciphertext bi_encrypted;
     encryptor.encrypt(bi_plain, bi_encrypted);
+    
     
     Ciphertext tb_encrypted;
     evaluator.multiply(tau_encrypted, bi_encrypted,tb_encrypted);
     evaluator.relinearize_inplace(tb_encrypted, relin_keys);
-    decryptor.decrypt(tb_encrypted, test_decrypted);
-    //cout << "tb:" + test_decrypted.to_string() <<"\n"<< endl;
+    decryptor.decrypt(tb_encrypted, plain_result);
+    batch_encoder.decode(plain_result, pod_result);
+    cout << "tb:" << endl;
+    print_matrix(pod_result, row_size);
     
-    //randomizes
-    Plaintext tb_decrypted;
-    decryptor.decrypt(tb_encrypted, tb_decrypted);
-  
-    encryptor.encrypt(tb_decrypted, tb_encrypted);
-    decryptor.decrypt(tb_encrypted, test_decrypted);
-    //cout << "retb:" + test_decrypted.to_string() <<"\n"<< endl;
-    
-	
-	
     //tb=(bi-tb)*(c)+(1-c)*tb
     Ciphertext resc_encrypted;
     evaluator.sub(bi_encrypted,tb_encrypted,resc_encrypted);
@@ -236,21 +292,39 @@ int main()
     evaluator.multiply(tb_encrypted,one_sub_c_encrypted,resd_encrypted);
     evaluator.relinearize_inplace(resd_encrypted, relin_keys);
     evaluator.add(resc_encrypted,resd_encrypted,tb_encrypted);
-    decryptor.decrypt(tb_encrypted, test_decrypted);
-    //cout << "tb:" + test_decrypted.to_string() <<"\n"<< endl;
     
+    decryptor.decrypt(tb_encrypted, plain_result);
+    batch_encoder.decode(plain_result, pod_result);
+    cout << "tb:" << endl;
+    print_matrix(pod_result, row_size);
     
     //t=(t+bi-tb)(1-ai)+tb*ai
     
-    int ai=mpz_tstbit(a,i);
-    //printf("ai:%d\n",ai);
-    Plaintext ai_plain(uint64_to_hex_string(ai));
+    //ai
+    vector<uint64_t> matrix_ai(slot_count, 0ULL);  
+    cout<<i<<endl;  
+    for(int j=0; j<row_size;j++){
+    matrix_ai[j]=(valueAtBit(matrix_a[j],i));
+    matrix_ai[row_size + j]=(valueAtBit(matrix_a[row_size + j],i));
+    }
+     cout << "matrix_ai:" << endl;
+    print_matrix(matrix_ai, row_size);
+    Plaintext ai_plain;
+    batch_encoder.encode(matrix_ai, ai_plain);
     Ciphertext ai_encrypted;
     encryptor.encrypt(ai_plain, ai_encrypted);
     
-    int one_sub_ai=1-ai;
-    //printf("one_sub_ai:%d\n",one_sub_ai);
-    Plaintext one_sub_ai_plain(uint64_to_hex_string(one_sub_ai));
+    //1-ai
+    vector<uint64_t> matrix_one_sub_ai(slot_count, 0ULL);    
+    for(int j=0; j<row_size;j++){
+    matrix_one_sub_ai[j]=1-matrix_ai[j];
+    matrix_one_sub_ai[row_size + j]=1-matrix_ai[row_size + j];
+    }
+     cout << "matrix_one_sub_ai:" << endl;
+    print_matrix(matrix_one_sub_ai, row_size);
+    Plaintext one_sub_ai_plain;
+    batch_encoder.encode(matrix_one_sub_ai, one_sub_ai_plain);
+    
     Ciphertext one_sub_ai_encrypted;
     encryptor.encrypt(one_sub_ai_plain, one_sub_ai_encrypted);
     
@@ -259,37 +333,37 @@ int main()
     evaluator.sub(t_encrypted,tb_encrypted,t_encrypted);
     evaluator.multiply(t_encrypted,one_sub_ai_encrypted,rese_encrypted);
     evaluator.relinearize_inplace(rese_encrypted, relin_keys);
+     decryptor.decrypt(rese_encrypted, plain_result);
+    batch_encoder.decode(plain_result, pod_result);
+    cout << "res e:" << endl;
+    print_matrix(pod_result, row_size);
     
     Ciphertext resf_encrypted;
     evaluator.multiply(tb_encrypted,ai_encrypted,resf_encrypted);
     evaluator.relinearize_inplace(resf_encrypted, relin_keys);
+    decryptor.decrypt(resf_encrypted, plain_result);
+    batch_encoder.decode(plain_result, pod_result);
+    cout << "res e:" << endl;
+    print_matrix(pod_result, row_size);
+    
+    
     evaluator.add(rese_encrypted,resf_encrypted,t_encrypted);
     evaluator.relinearize_inplace(t_encrypted, relin_keys);
-    decryptor.decrypt(t_encrypted, test_decrypted);
-    cout << "t:" + test_decrypted.to_string() <<"\n"<< endl;
+    decryptor.decrypt(t_encrypted, plain_result);
+    batch_encoder.decode(plain_result, pod_result);
+    cout << "t:" << endl;
+    print_matrix(pod_result, row_size);
+    
     
     cout << "    + size of freshly encrypted t: " << t_encrypted.size() << endl;
 
     
     cout << "    + noise budget in freshly encrypted t: " << decryptor.invariant_noise_budget(t_encrypted) << " bits"
          << endl;
+    cout<<"-------------------"<<endl;
     
     
-
-	      
-            
-            
-    		
-    		}	
-    if(test_decrypted.to_string()=="1")
-            cout<<"-----------------------------a<b-------------------------------"<<endl;
-            else cout<<"------------------------a>=b-------------------------------"<<endl;
- 
-	
-	
-    
-    
-    mpz_clear(a);
-    mpz_clear(b);
+    }
+   
     return 0;
 } 
