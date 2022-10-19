@@ -46,7 +46,8 @@ int *testDecoding(mpz_t w, int n, int block, int num) {
 
     mpz_get_str(str, 2, w);
     b = str;
-
+	
+    
     if (b.length() < length) {
         b.insert(0, length - b.length(), c);
     }
@@ -56,8 +57,8 @@ int *testDecoding(mpz_t w, int n, int block, int num) {
     int *value = new int[num];
     string val;
     for (int i = 0; i < num; i++) {
-        int a = block - 1 + (n + block) * i;
-        int c = 1 + n;
+        int a = (n + block) * i;
+        int c = block + n;
         val = b.substr(a, c);
         value[i] = translittle(val);
 

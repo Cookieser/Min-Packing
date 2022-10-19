@@ -14,6 +14,6 @@ using namespace std;
 string toBinary(long long n, int length);
 void trans(string s, mpz_t result);
 int testEncoding(int value[], int n, int block, int num, mpz_t result);
-int encoding(int block, int n,char *input,char *output);
+int encoding(int block, int n,char *input,char *output,mpz_t result);
  
 #endif

@@ -83,7 +83,7 @@ int testEncoding(int value[], int n, int block, int num, mpz_t result) {
 }
 
 
-int encoding(int block, int n,char *input,char *output) {
+int encoding(int block, int n,char *input,char *output,mpz_t result) {
 
 
    
@@ -149,7 +149,7 @@ int encoding(int block, int n,char *input,char *output) {
 
     FILE *fp2 = fopen(output, "w");
 
-    mpz_t result;
+
 
     mpz_init(result);
 
