@@ -26,375 +26,11 @@ using namespace seal;
 
 
 
-/*
 
-int refresh(mpz_t res,mpz_t a,paillier_public_key pub,paillier_private_key priv)
-{
-	
-	
-	mpz_t val;
-	mpz_init(val);
-	paillier_decrypt(val,a,&priv);
-	paillier_encrypt(res,val,&pub);
-	mpz_clear(val);
-	return 0;
-
-
-}
-
-
-
-
-int EncodingList(int *val,int l, int block, int num, mpz_t result) {
-
-    mpz_init(result);
-
-    
-    string m;
-    char c = '0';
-    for (int i = 0; i < num; i++) {
-       
-
-        string q = toBinary(val[i], l);
-        q.insert(0, block, c);
-        cout << "Adding value expressed by binary in list:" << q << endl;
-        m = m + q;
-
-    }
-
-    cout << "The value packed:" << m << endl;
-    printf("%s", "so, the packing value is ");
-    trans(m, result);
-    return 0;
-}
-int EncodingInt(int value,int l, int block, int num, mpz_t result) {
-
-    mpz_init(result);
-
-    
-    string m;
-    char c = '0';
-    for (int i = 0; i < num; i++) {
-       
-
-        string q = toBinary(value, l);
-        q.insert(0, block, c);
-        cout << "Adding value expressed by binary :" << q << endl;
-        m = m + q;
-
-    }
-
-    cout << "The value packed:" << m << endl;
-    printf("%s", "so, the packing value is ");
-    trans(m, result);
-    return 0;
-}
-
-
-int EncodingRandomM(int l, int block,int lambda,int num, mpz_t result,unsigned long int seed) {
-
-    mpz_t r,base;
-    
-
-    mpz_init(result);
-    mpz_init(r);
-
-    mpz_init(base);
-
-    gmp_randstate_t state;
-    gmp_randinit_default(state);
-    gmp_randseed_ui(state, seed);
-    
-
-   
-    mpz_set_si(base, pow(2, l));
-    string m;
-    char c = '0';
-    for (int i = 0; i < num; i++) {
-	mpz_urandomb(r,state,l+lambda);
-	
-        string q = toBinary(mpz_get_ui(r), l+lambda);
-
-        q.insert(0, block-lambda, c);
-
-        cout << "Adding value expressed by binary :" << q << endl;
-
-        
-        m = m + q;
-
-
-    }
-
-    cout << "The value packed :" << m << endl;
-
-    printf("%s", "so, the packing value is ");
-    trans(m, result);
-
-
-    printf("\n");
-    
-    
-    mpz_clear(r);
-    mpz_clear(base);
-    return 0;
-}
-
-
-           
-int main()
-{
-	
-	mpz_t res,cmax,pi1,pii,cpii,cres,bi,ri,si,csi,cri,cmi,cai,cvi,negativeone,cnegativeone,cbi,max,resa,resb,resc,test,encoding_value1,encoding_value2,encoding_value3,encoding_m;
-	
-	mpz_init(res);
-	mpz_init(cmax);
-	mpz_init(pi1);
-	mpz_init(pii);
-	mpz_init(cpii);
-	mpz_init(cres);
-	mpz_init(bi);
-	mpz_init(ri);
-	mpz_init(si);
-	mpz_init(csi);
-	mpz_init(cri);
-	mpz_init(cmi);
-	mpz_init(cai);
-	mpz_init(cvi);
-	mpz_init(negativeone);
-	mpz_init(cnegativeone);
-	mpz_init(cbi);
-	mpz_init(max);
-	mpz_init(resa);
-	mpz_init(resb);
-	mpz_init(resc);
-	mpz_init(test);
-	mpz_init(encoding_value2);
-	mpz_init(encoding_value1);
-	mpz_init(encoding_value3);
-	mpz_init(encoding_m);
-	
-//generate keys
-	    int len=2048;
-	    paillier_public_key pub;
-	    paillier_private_key priv;
-
-	    paillier_public_init(&pub);
-	    paillier_private_init(&priv);
-	    paillier_keygen(&pub, &priv, len);
-	    //init
-	    
-		
-		
-	    mpz_set_si(negativeone, -1);
-	    paillier_encrypt(cnegativeone,negativeone,&pub);
-	    
-	    int n=5;
-	    int nums=3;
-	    int block=6;
-	    int l=7;
-	int lambda=3;
-	
-	
-	srand((unsigned)time(NULL));
-	    int value[3][5] = {  
- 			{23, 21, 20, 4, 3} ,   
- 			{13, 20, 22, 7, 13} ,   
- 			{1, 25, 27, 8, 5}   
-				};
-				
-	    mpz_t value_arr[nums];
-	    
-	    for (int i = 0; i < nums; i++) {
-        		mpz_init(value_arr[i]);  // Initialize x, with space for n-bits numbers, and set its value to 0.
-        		EncodingList(value[i],l, block, n, value_arr[i]);
-    		}
-	    
-	    for (int i = 0; i < nums; i++) {
-                gmp_printf("%Zd\n", value_arr[i]);  
-               }
-	     
-	    //Here needs a random shuffle
-	    //init
-	    gmp_printf("%Zd\n", value_arr[0]);
-	    mpz_set(max,value_arr[0]);
-	    paillier_encrypt(cmax,max,&pub);
-	    paillier_decrypt(res,cmax,&priv);
-	    gmp_printf ("max:%Zd\n",res);
-	    
-	    //m
-	    EncodingInt(1,l, block, n, encoding_m);
-	    
-	    
-	   
-    
-    		
-	    
-	    
-
-  
-    
-
-
-	
-	    
-	   
-for(int i=1;i<2;i++){ 
-		    
-	  printf("=======================================================\n");  
-	  mpz_set(pii,value_arr[i]);
-	  gmp_printf ("pii:%Zd\n",pii);
-	  paillier_encrypt(cpii,pii,&pub);
-	  //--------------------------------------------------------------------------
-	  
-	  
-	  //encrypted_comparing ------>bi||bi||bi
-	  batching_encrypted_comparing(cmax, cpii, pub,  priv,l,block,n,lambda,bi);
-	  gmp_printf ("bi:%Zd\n",bi);
-	  
-	  
-	  //------------------------------------------------------------------------------
-	  
-	  EncodingRandomM(l, block,lambda, n, ri,rand());
-	  EncodingRandomM(l, block,lambda, n, si,rand());
-	  
-          //ri
-	  gmp_printf ("ri:%Zd\n",ri); 
-	  paillier_encrypt(cri,ri,&pub);
-	  
-	  //si
-	  gmp_printf ("si:%Zd\n",si);
-	  paillier_encrypt(csi,si,&pub);
-	  
-	  //mi
-	  paillier_homomorphic_add(cmi,cmax,cri,&pub);
-	  paillier_decrypt(res,cmi,&priv);
-	  gmp_printf ("mi:%Zd\n",res); 
-	  testDecoding(res, l, block, n);
-	  
-	  //ai
-	  paillier_homomorphic_add(cai,cpii,csi,&pub);
-	  paillier_decrypt(res,cai,&priv);
-	  gmp_printf ("ai:%Zd\n",res); 
-	  testDecoding(res, l, block, n);
-	  
-	  
-	  //vi=ai*bi+mi*(1-bi)
-	  
-/*	    
-	    
-	  
-	    	
-		
-		
-		if(mpz_cmp_si(bi,0))
-		{
-		// bi=1   [[vi]]=[[ai]]
-		m=i+1;
-
-		refresh(cvi,cai,pub,priv);
-		paillier_decrypt(res,cvi,&priv);
-		//gmp_printf ("vi:%Zd\n",res);
-		}
-		else
-		{
-		refresh(cvi,cmi,pub,priv);
-		paillier_decrypt(res,cvi,&priv);
-		//gmp_printf ("vi:%Zd\n",res);
-		}
-		
-		paillier_encrypt(cbi,bi,&pub);
-		//A:max=vi+(bi-1)*ri-bi*si
-		
-		
-		//resa=[[-bi*si]]
-		paillier_homomorphic_multc(resa,cbi,si,&pub);
-		paillier_decrypt(test,resa,&priv);
-		//gmp_printf ("si*bi:%Zd\n",test);
-		paillier_homomorphic_multc(resa,resa,negativeone,&pub);
-		
-		//resb=[[(bi-1)*ri]]
-		
-		paillier_homomorphic_add(resb,cbi,cnegativeone,&pub);
-		paillier_homomorphic_multc(resb,resb,ri,&pub);
-		paillier_decrypt(test,resb,&priv);
-		//gmp_printf ("resb:%Zd\n",test);
-		
-		//combine
-		paillier_homomorphic_add(cmax,cvi,resa,&pub);
-
-		paillier_homomorphic_add(cmax,cmax,resb,&pub);
-		
-		paillier_decrypt(max,cmax,&priv);
-		printf("m=%d\n",m);
-		gmp_printf ("max:%Zd\n",max);
-		
-		
-		printf("=======================================================");
-		printf("\n");
-		
-		
-		
-		
-	    
-	    }
-	    
-	    	
-	
-	
-	
-*/
-/*
-}
-	//
-	mpz_clear(res);
-	mpz_clear(cmax);
-	mpz_clear(pi1);
-	mpz_clear(pii);
-	mpz_clear(cpii);
-	mpz_clear(cres);
-	mpz_clear(bi);
-	mpz_clear(ri);
-	mpz_clear(si);
-	mpz_clear(csi);
-	mpz_clear(cri);
-	mpz_clear(cmi);
-	mpz_clear(cai);
-	mpz_clear(cvi);
-        mpz_clear(negativeone);
-        mpz_clear(cnegativeone);
-        mpz_clear(cbi);
-        mpz_clear(max);
-	mpz_clear(resa);
-	mpz_clear(resb);
-	mpz_clear(resc);
-	mpz_clear(test);
-	mpz_clear(encoding_value2);
-	mpz_clear(encoding_value1);
-	mpz_clear(encoding_value3);
-	mpz_clear(encoding_m);
-	for (int i = 0; i < nums; i++) {
-                mpz_clear(value_arr[i]);  
-               }
-        
-        
-        
-        
-        
-	
-	
-	
-	
-	
-	
-        return 0;
-
-
-
-}
-*/
 
 vector<uint64_t> decodingMPZ2Vec(int num,int l,int block,int row_size,int slot_count,mpz_t w){
 	vector<uint64_t> matrix_bi(slot_count, 0ULL);
+	int encoding_row=(num+1)/2;
 	int length = (l + block) * num;
     	char *str = new char[100000];
     	string b;
@@ -407,15 +43,22 @@ vector<uint64_t> decodingMPZ2Vec(int num,int l,int block,int row_size,int slot_c
     if (b.length() < length) {
         b.insert(0, length - b.length(), c);
     }
-    cout << "The packing result can use binary to express: " << b << endl;
+    //cout << "The packing result can use binary to express: " << b << endl;
 
 
     string val;
-    for (int i = 0; i < num; i++) {
+    for (int i = 0; i < encoding_row; i++) {
         int a = (l + block) * i;
         int c = block + l;
         val = b.substr(a, c);
         matrix_bi[i] = translittle(val);
+
+    }
+    for (int i = encoding_row; i < num; i++) {
+        int a = (l + block) * i;
+        int c = block + l;
+        val = b.substr(a, c);
+        matrix_bi[row_size+i-encoding_row] = translittle(val);
 
     }
     return matrix_bi;
@@ -450,13 +93,13 @@ int encodingVec(int n,int l,int block,int row_size, vector<uint64_t> max_result,
        
         string q = toBinary(value[i], l);
         q.insert(0, block, c);
-        cout << "Adding value expressed by binary:" << q << endl;
+       // cout << "Adding value expressed by binary:" << q << endl;
         m = m + q;
 
     }
 
-    cout << "The value packed:" << m << endl;
-    printf("%s", "so, the packing value is ");
+    //cout << "The value packed:" << m << endl;
+    //printf("%s", "so, the packing value is ");
     trans(m, result);
     return 0;
 }
@@ -532,10 +175,10 @@ int main(){
     int lambda=3;
     
     int value[4][5] = {  
- 			{3, 18, 20, 8, 30} ,   
+ 			{3, 18, 20, 8, 10} ,   
  			{13, 20, 29, 7, 13} ,   
  			{14, 25, 27, 6, 5} ,
- 			{14, 22, 23, 12, 34}  
+ 			{14, 22, 23, 12,19 }  
 				};
     
     srand((unsigned)time(NULL));
@@ -613,11 +256,11 @@ int main(){
     
     encodingVec(n,l,block,row_size,max_result,max);
     
-    gmp_printf("%Zd", max);
+    //gmp_printf("%Zd", max);
     paillier_encrypt(cmax,max,&pub);
     
     encodingVec(n,l,block,row_size,matrix[i],pii);
-    gmp_printf("%Zd", pii);
+    //gmp_printf("%Zd", pii);
     paillier_encrypt(cpii,pii,&pub);
 
     
@@ -635,14 +278,6 @@ int main(){
     
     
     
-        
-    for(int j=0; j<row_size;j++){
-    
-    matrix_bi[j]=1;
-    matrix_bi[row_size + j]=0;
-    }
-     cout << "matrix_bi:" << endl;
-    print_matrix(matrix_bi, row_size);
     Plaintext bi_plain;
     batch_encoder.encode(matrix_bi, bi_plain);
     Ciphertext bi_encrypted;

@@ -37,7 +37,7 @@ int EncodingLSIC(vector<uint64_t> result,int row_size,int n, int block,int num, 
         
         q.insert(0, block, c);
        
-        cout << "Adding value expressed by binary in t :" << q << endl;
+       // cout << "Adding value expressed by binary in t :" << q << endl;
        
         
         m = m + q;
@@ -48,17 +48,17 @@ int EncodingLSIC(vector<uint64_t> result,int row_size,int n, int block,int num, 
         
         q.insert(0, block, c);
        
-        cout << "Adding value expressed by binary in t :" << q << endl;
+        //cout << "Adding value expressed by binary in t :" << q << endl;
        
         
         m = m + q;
    
     }
 
-    cout << "The value t packed :" << m << endl;
-    printf("%s", "so, the packing value t is ");
+   // cout << "The value t packed :" << m << endl;
+   // printf("%s", "so, the packing value t is ");
     trans(m, t);
-    printf("\n");
+   // printf("\n");
     
     
     return 0;
@@ -80,7 +80,7 @@ int EncodingZ(mpz_t z,int n, int block,int num, mpz_t zl,mpz_t d) {
         q.insert(0, block, c);
         p.insert(0, block, c);
         cout << "Adding value expressed by binary in d :" << q << endl;
-        cout << "Adding value expressed by binary in zl:" << p << endl;
+      //  cout << "Adding value expressed by binary in zl:" << p << endl;
         
         
         m = m + q;
@@ -89,12 +89,12 @@ int EncodingZ(mpz_t z,int n, int block,int num, mpz_t zl,mpz_t d) {
     }
 
     cout << "The value d packed :" << m << endl;
-    cout << "The value zl packed:" << s << endl;
-    printf("%s", "so, the packing value d is ");
+    //cout << "The value zl packed:" << s << endl;
+    //printf("%s", "so, the packing value d is ");
     trans(m, d);
-    printf("%s", "so, the packing value zl is ");
+    //printf("%s", "so, the packing value zl is ");
     trans(s, zl);
-    printf("\n");
+   // printf("\n");
     
     
     return 0;
@@ -131,8 +131,8 @@ int EncodingRandom(int n, int block,int lambda,int num, mpz_t result,mpz_t rl,mp
         q.insert(0, block-lambda, c);
         p.insert(0, block, c);
         h.insert(0, block, c);
-        cout << "Adding value expressed by binary in rl:" << p << endl;
-        cout << "Adding value expressed by binary in r :" << q << endl;
+       // cout << "Adding value expressed by binary in rl:" << p << endl;
+       // cout << "Adding value expressed by binary in r :" << q << endl;
         cout << "Adding value expressed by binary in c :" << h << endl;
         
         m = m + q;
@@ -141,16 +141,16 @@ int EncodingRandom(int n, int block,int lambda,int num, mpz_t result,mpz_t rl,mp
 
     }
 
-    cout << "The value r packed :" << m << endl;
-    cout << "The value rl packed:" << s << endl;
+    //cout << "The value r packed :" << m << endl;
+    //cout << "The value rl packed:" << s << endl;
     cout << "The value c packed :" << t << endl;
-    printf("%s", "so, the packing value r is ");
+    //printf("%s", "so, the packing value r is ");
     trans(m, result);
-    printf("%s", "so, the packing value rl is ");
+   // printf("%s", "so, the packing value rl is ");
     trans(s, rl);
-    printf("%s", "so, the packing value c is ");
+    //printf("%s", "so, the packing value c is ");
     trans(t, cc);
-    printf("\n");
+    //printf("\n");
     
     
     mpz_clear(r);
@@ -171,13 +171,13 @@ int EncodingSame(int n, int block, int num, mpz_t result) {
 
         string q = toBinary(pow(2, n), n);
         q.insert(0, block-1, c);
-        cout << "Adding value expressed by binary:" << q << endl;
+        //cout << "Adding value expressed by binary:" << q << endl;
         m = m + q;
 
     }
 
-    cout << "The value packed:" << m << endl;
-    printf("%s", "so, the packing value is ");
+   // cout << "The value packed:" << m << endl;
+    //printf("%s", "so, the packing value is ");
     trans(m, result);
     return 0;
 }
@@ -220,7 +220,7 @@ int batching_encrypted_comparing(mpz_t ca, mpz_t cb,paillier_public_key pub, pai
 	   
 	   //encoding q
 	   EncodingSame(l,block,n, q);
-	   gmp_printf ("q:%Zd\n",q);
+	   //gmp_printf ("q:%Zd\n",q);
 	   paillier_encrypt(cq,q,&pub);
 	   
 	   //[[x]]=[[b-a+q]]
@@ -249,13 +249,13 @@ int batching_encrypted_comparing(mpz_t ca, mpz_t cb,paillier_public_key pub, pai
 	 vector<uint64_t> matrix_c(n, 0ULL);
 	  matrix_c=seal_lsic(d, c,n,block,l);
 	  EncodingLSIC(matrix_c,16384,l,block,n, t); 
-	  gmp_printf ("t:%Zd\n",t);
+	 // gmp_printf ("t:%Zd\n",t);
 	 //--------------------------------------------------------------------------  
 	/*batching the front x row_size*/
 	
 	 //t
 	 
-	 gmp_printf ("t:%Zd\n",t);
+	// gmp_printf ("t:%Zd\n",t);
 	 paillier_encrypt(ct,t,&pub);
 	 
 	 
@@ -266,12 +266,12 @@ int batching_encrypted_comparing(mpz_t ca, mpz_t cb,paillier_public_key pub, pai
 	
 		paillier_homomorphic_add(cres,czl,cn,&pub);
 		paillier_decrypt(res,cres,&priv);
-		gmp_printf ("res:%Zd\n",res);
+		//gmp_printf ("res:%Zd\n",res);
 		testDecoding(res, l, block, n);
 		
 		paillier_homomorphic_add(cres,cres,cm,&pub);
 		paillier_decrypt(res,cres,&priv);
-		gmp_printf ("res:%Zd\n",res);
+		//gmp_printf ("res:%Zd\n",res);
 		testDecoding(res, l, block, n);
 	   
 	   

@@ -20,14 +20,14 @@ using namespace std;
 long long translittle(string s) {
     long long res = 0;
     for (int i = 0; i < s.length(); i++) {
-        printf("%d", s[i] - 48);
+      //  printf("%d", s[i] - 48);
 
 
         res = res + (s[i] - 48) * pow(2, s.length() - 1 - i);
 
 
     }
-    printf("--------The value  by decimal  %lld\n", res);
+    //printf("--------The value  by decimal  %lld\n", res);
     return res;
 
 }
@@ -51,7 +51,7 @@ int *testDecoding(mpz_t w, int n, int block, int num) {
     if (b.length() < length) {
         b.insert(0, length - b.length(), c);
     }
-    cout << "The packing result can use binary to express: " << b << endl;
+    //cout << "The packing result can use binary to express: " << b << endl;
 
 
     int *value = new int[num];

@@ -47,7 +47,7 @@ void trans(string s, mpz_t result) {
         mpz_add(result, b, result);
 
     }
-    gmp_printf("%Zd", result);
+    //gmp_printf("%Zd", result);
     printf("\n");
     mpz_clear(base);
     mpz_clear(b);

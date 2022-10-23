@@ -21,7 +21,7 @@ int valueAtBit(int num, int bit) {
 
 vector<uint64_t> seal_lsic(mpz_t a, mpz_t b,int n,int block,int l)
 {
-
+	cout<<"------------------------LSIC------------------------"<<"\n"<<endl;
 
 
 	mpz_t res;
@@ -58,7 +58,7 @@ vector<uint64_t> seal_lsic(mpz_t a, mpz_t b,int n,int block,int l)
     cout << endl; 
 
     auto qualifiers = context.first_context_data()->qualifiers();
-    cout << "Batching enabled: " << boolalpha << qualifiers.using_batching << endl;
+    //cout << "Batching enabled: " << boolalpha << qualifiers.using_batching << endl;
     
 
 
@@ -89,7 +89,7 @@ vector<uint64_t> seal_lsic(mpz_t a, mpz_t b,int n,int block,int l)
     BatchEncoder batch_encoder(context);
     size_t slot_count = batch_encoder.slot_count();
     size_t row_size = slot_count / 2;
-    cout << "Plaintext matrix row size: " << row_size << endl;
+    //cout << "Plaintext matrix row size: " << row_size << endl;
     
     
     int *value_a=testDecoding(a, l, block, n);
@@ -105,7 +105,7 @@ vector<uint64_t> seal_lsic(mpz_t a, mpz_t b,int n,int block,int l)
     for(int i=0; i<n-encoding_row;i++){
     matrix_a[row_size + i]=value_a[encoding_row+ i];
     }
-     cout << "matrix_a:" << endl;
+     //cout << "matrix_a:" << endl;
     print_matrix(matrix_a, row_size);
     
     
@@ -117,7 +117,7 @@ vector<uint64_t> seal_lsic(mpz_t a, mpz_t b,int n,int block,int l)
     for(int i=0; i<n-encoding_row;i++){
     matrix_b[row_size + i]=value_b[encoding_row+ i];
     }
-     cout << "matrix_b:" << endl;
+     //cout << "matrix_b:" << endl;
     print_matrix(matrix_b, row_size);
     
 
@@ -130,8 +130,8 @@ vector<uint64_t> seal_lsic(mpz_t a, mpz_t b,int n,int block,int l)
     matrix_a0[i]=(valueAtBit(matrix_a[i],1));
     matrix_a0[row_size + i]=(valueAtBit(matrix_a[row_size + i],1));
     }
-     cout << "matrix_a0:" << endl;
-    print_matrix(matrix_a0, row_size);
+     //cout << "matrix_a0:" << endl;
+    //print_matrix(matrix_a0, row_size);
     
     //b0
     vector<uint64_t> matrix_b0(slot_count, 0ULL);    
@@ -139,8 +139,8 @@ vector<uint64_t> seal_lsic(mpz_t a, mpz_t b,int n,int block,int l)
     matrix_b0[i]=(valueAtBit(matrix_b[i],1));
     matrix_b0[row_size + i]=(valueAtBit(matrix_b[row_size + i],1));
     }
-     cout << "matrix_b0:" << endl;
-    print_matrix(matrix_b0, row_size);
+    // cout << "matrix_b0:" << endl;
+    //print_matrix(matrix_b0, row_size);
     Plaintext plain_matrix_b0;
     batch_encoder.encode(matrix_b0, plain_matrix_b0);
     Ciphertext encrypted_matrix_b0;
@@ -155,8 +155,8 @@ vector<uint64_t> seal_lsic(mpz_t a, mpz_t b,int n,int block,int l)
     matrix_one_sub_a0[i]=1-matrix_a0[i];
     matrix_one_sub_a0[row_size + i]=1-matrix_a0[row_size + i];
     }
-     cout << "matrix_one_sub_a0:" << endl;
-    print_matrix(matrix_one_sub_a0, row_size);
+    // cout << "matrix_one_sub_a0:" << endl;
+    //print_matrix(matrix_one_sub_a0, row_size);
     Plaintext plain_matrix_one_sub_a0;
     batch_encoder.encode(matrix_one_sub_a0, plain_matrix_one_sub_a0);
     Ciphertext encrypted_matrix_one_sub_a0;
@@ -209,8 +209,8 @@ vector<uint64_t> seal_lsic(mpz_t a, mpz_t b,int n,int block,int l)
     decryptor.decrypt(t_encrypted, plain_result);
     vector<uint64_t> pod_result;
     batch_encoder.decode(plain_result, pod_result);
-    cout << "t:" << endl;
-    print_matrix(pod_result, row_size);
+    //cout << "t:" << endl;
+    //print_matrix(pod_result, row_size);
     
     
 for(int i=2;i<l;i++){
@@ -224,8 +224,8 @@ for(int i=2;i<l;i++){
     matrix_c[j]=rand()%2;
     matrix_c[row_size + j]=rand()%2;
     }
-     cout << "matrix_c:" << endl;
-    print_matrix(matrix_c, row_size);
+    // cout << "matrix_c:" << endl;
+    //print_matrix(matrix_c, row_size);
     Plaintext c_plain;
     batch_encoder.encode(matrix_c, c_plain);
     
@@ -241,8 +241,8 @@ for(int i=2;i<l;i++){
     matrix_one_sub_c[j]=1-matrix_c[j];
     matrix_one_sub_c[row_size + j]=1-matrix_c[row_size + j];
     }
-     cout << "matrix_one_sub_c:" << endl;
-    print_matrix(matrix_one_sub_c, row_size);
+    // cout << "matrix_one_sub_c:" << endl;
+    //print_matrix(matrix_one_sub_c, row_size);
     Plaintext one_sub_c_plain;
     batch_encoder.encode(matrix_one_sub_c, one_sub_c_plain);
     
@@ -269,8 +269,8 @@ for(int i=2;i<l;i++){
     
     decryptor.decrypt(tau_encrypted, plain_result);
     batch_encoder.decode(plain_result, pod_result);
-    cout << "tau:" << endl;
-    print_matrix(pod_result, row_size);
+    //cout << "tau:" << endl;
+    //print_matrix(pod_result, row_size);
     
     
     // randomizes 
@@ -280,8 +280,8 @@ for(int i=2;i<l;i++){
     encryptor.encrypt(tau_decrypted, tau_encrypted);
     decryptor.decrypt(tau_encrypted, plain_result);
     batch_encoder.decode(plain_result, pod_result);
-    cout << "re-tau:" << endl;
-    print_matrix(pod_result, row_size);
+    //cout << "re-tau:" << endl;
+    //print_matrix(pod_result, row_size);
    
     
     
@@ -294,8 +294,8 @@ for(int i=2;i<l;i++){
     matrix_bi[j]=(valueAtBit(matrix_b[j],i));
     matrix_bi[row_size + j]=(valueAtBit(matrix_b[row_size + j],i));
     }
-     cout << "matrix_bi:" << endl;
-    print_matrix(matrix_bi, row_size);
+     //cout << "matrix_bi:" << endl;
+    //print_matrix(matrix_bi, row_size);
     Plaintext bi_plain;
     batch_encoder.encode(matrix_bi, bi_plain);
     Ciphertext bi_encrypted;
@@ -307,8 +307,8 @@ for(int i=2;i<l;i++){
     evaluator.relinearize_inplace(tb_encrypted, relin_keys);
     decryptor.decrypt(tb_encrypted, plain_result);
     batch_encoder.decode(plain_result, pod_result);
-    cout << "tb:" << endl;
-    print_matrix(pod_result, row_size);
+    //cout << "tb:" << endl;
+    //print_matrix(pod_result, row_size);
     
     //tb=(bi-tb)*(c)+(1-c)*tb
     Ciphertext resc_encrypted;
@@ -322,8 +322,8 @@ for(int i=2;i<l;i++){
     
     decryptor.decrypt(tb_encrypted, plain_result);
     batch_encoder.decode(plain_result, pod_result);
-    cout << "tb:" << endl;
-    print_matrix(pod_result, row_size);
+    //cout << "tb:" << endl;
+    //print_matrix(pod_result, row_size);
     
     //t=(t+bi-tb)(1-ai)+tb*ai
     
@@ -334,8 +334,8 @@ for(int i=2;i<l;i++){
     matrix_ai[j]=(valueAtBit(matrix_a[j],i));
     matrix_ai[row_size + j]=(valueAtBit(matrix_a[row_size + j],i));
     }
-     cout << "matrix_ai:" << endl;
-    print_matrix(matrix_ai, row_size);
+    // cout << "matrix_ai:" << endl;
+    //print_matrix(matrix_ai, row_size);
     Plaintext ai_plain;
     batch_encoder.encode(matrix_ai, ai_plain);
     Ciphertext ai_encrypted;
@@ -347,8 +347,8 @@ for(int i=2;i<l;i++){
     matrix_one_sub_ai[j]=1-matrix_ai[j];
     matrix_one_sub_ai[row_size + j]=1-matrix_ai[row_size + j];
     }
-     cout << "matrix_one_sub_ai:" << endl;
-    print_matrix(matrix_one_sub_ai, row_size);
+    // cout << "matrix_one_sub_ai:" << endl;
+    //print_matrix(matrix_one_sub_ai, row_size);
     Plaintext one_sub_ai_plain;
     batch_encoder.encode(matrix_one_sub_ai, one_sub_ai_plain);
     
@@ -362,16 +362,16 @@ for(int i=2;i<l;i++){
     evaluator.relinearize_inplace(rese_encrypted, relin_keys);
      decryptor.decrypt(rese_encrypted, plain_result);
     batch_encoder.decode(plain_result, pod_result);
-    cout << "res e:" << endl;
-    print_matrix(pod_result, row_size);
+    //cout << "res e:" << endl;
+    //print_matrix(pod_result, row_size);
     
     Ciphertext resf_encrypted;
     evaluator.multiply(tb_encrypted,ai_encrypted,resf_encrypted);
     evaluator.relinearize_inplace(resf_encrypted, relin_keys);
     decryptor.decrypt(resf_encrypted, plain_result);
     batch_encoder.decode(plain_result, pod_result);
-    cout << "res e:" << endl;
-    print_matrix(pod_result, row_size);
+    //cout << "res e:" << endl;
+    //print_matrix(pod_result, row_size);
     
     
     evaluator.add(rese_encrypted,resf_encrypted,t_encrypted);
