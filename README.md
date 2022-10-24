@@ -4,7 +4,7 @@
 
 Secure maximum(minimum) batching comparison scheme based on Paillier and BFV
 
-* The maximum value comparison scheme is referred to the paper: [Machine Learning Classification over Encrypted Data](https://eprint.iacr.org/2014/331.pdf)
+* The maximum value comparison scheme is referred to [Machine Learning Classification over Encrypted Data](https://eprint.iacr.org/2014/331.pdf)
 * Implementation of Paillier: https://github.com/camillevuillaume/Paillier-GMP
 * Implementation of BFV: https://github.com/microsoft/SEAL
 
