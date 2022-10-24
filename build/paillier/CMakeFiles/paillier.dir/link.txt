@@ -1,0 +1,2 @@
+/usr/bin/ar qc libpaillier.a  CMakeFiles/paillier.dir/encrypted_comparing.c.o CMakeFiles/paillier.dir/lsic.c.o CMakeFiles/paillier.dir/paillier.c.o CMakeFiles/paillier.dir/paillier_io.c.o CMakeFiles/paillier.dir/paillier_manage_keys.c.o CMakeFiles/paillier.dir/tools.c.o
+/usr/bin/ranlib libpaillier.a

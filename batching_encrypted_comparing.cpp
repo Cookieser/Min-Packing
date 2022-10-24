@@ -2,12 +2,9 @@
 #include <gmp.h>
 #include <string>
 #include <time.h>
-#include "coding/encoding.h"
-#include "coding/decoding.h"
 
-#include "paillier/lsic.c"
-#include "paillier/encrypted_comparing.c"
-#include "paillier/paillier.h"
+
+
 #include "seal_lsic.cpp"
 
 using namespace std;
@@ -248,7 +245,7 @@ int batching_encrypted_comparing(mpz_t ca, mpz_t cb,paillier_public_key pub, pai
 	 //
 	 vector<uint64_t> matrix_c(n, 0ULL);
 	  matrix_c=seal_lsic(d, c,n,block,l);
-	  EncodingLSIC(matrix_c,16384,l,block,n, t); 
+	  EncodingLSIC(matrix_c,8192,l,block,n, t); 
 	 // gmp_printf ("t:%Zd\n",t);
 	 //--------------------------------------------------------------------------  
 	/*batching the front x row_size*/

@@ -1,4 +1,4 @@
-#include "seal-part/examples.h"
+
 #include <gmp.h>
 #include <string>
 #include <time.h>
@@ -6,13 +6,7 @@
 #include <stdio.h>
 #include <limits.h>
 #include <errno.h>
-#include "coding/encoding.h"
 
-#include "coding/decoding.h"
-
-
-
-#include "paillier/paillier.h"
 
 #include "batching_encrypted_comparing.cpp"
 

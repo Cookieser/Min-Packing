@@ -6,9 +6,8 @@ enable_testing()
 
 add_subdirectory(coding) #add sub directory
 add_subdirectory(paillier) #add sub directory
-add_subdirectory(seal-part) #add sub directory
-file(COPY a.txt DESTINATION ${PROJECT_BINARY_DIR})
-file(COPY b.txt DESTINATION ${PROJECT_BINARY_DIR})
+
+
 add_executable(main main.cpp)
 
 
@@ -37,15 +36,27 @@ if(SEAL_BUILD_EXAMPLES)
 
 
     if(TARGET SEAL::seal)
-        target_link_libraries(main PRIVATE SEAL::seal gmp gmpxx coding paillier seal)
+        target_link_libraries(main PRIVATE SEAL::seal gmp gmpxx coding paillier )
     elseif(TARGET SEAL::seal_shared)
-        target_link_libraries(main PRIVATE SEAL::seal_shared gmp gmpxx coding paillier seal)
+        target_link_libraries(main PRIVATE SEAL::seal_shared gmp gmpxx coding paillier )
     else()
         message(FATAL_ERROR "Cannot find target SEAL::seal or SEAL::seal_shared")
     endif()
 endif()
 
 
+add_executable(lsic lsic_test.cpp)
+if(SEAL_BUILD_EXAMPLES)
+
+
+    if(TARGET SEAL::seal)
+        target_link_libraries(lsic PRIVATE SEAL::seal gmp gmpxx coding paillier )
+    elseif(TARGET SEAL::seal_shared)
+        target_link_libraries(lsic PRIVATE SEAL::seal_shared gmp gmpxx coding paillier)
+    else()
+        message(FATAL_ERROR "Cannot find target SEAL::seal or SEAL::seal_shared")
+    endif()
+endif()
 
 
 

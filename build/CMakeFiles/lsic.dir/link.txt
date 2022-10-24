@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/lsic.dir/lsic_test.cpp.o  -o bin/lsic  /usr/local/lib/libseal-4.0.a -lgmp -lgmpxx coding/libcoding.a paillier/libpaillier.a -pthread -lgmp -lgmpxx 
